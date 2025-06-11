@@ -1,0 +1,5 @@
+-- 코드를 입력하세요
+SELECT a.DATETIME
+FROM ANIMAL_INS a
+ORDER BY a.DATETIME asc
+limit 1;
