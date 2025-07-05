@@ -1,15 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 using namespace std;
 
 long long a, d, q;
 
 long long remain(long long x, long long y){
-	if( x < y ){
-		long long tmp = x;
-		x = y;
-		y = tmp; 
-	}
 	if(y == 0 ) return x;
 	return remain(y, x%y);
 }
@@ -38,12 +34,14 @@ void calc(int method, long long l, long long r) {
 		// |4| 8 12 16 -> d:4, x:4 -> 등차 1 
  		// -> 기존 등차의 약수중에 공약수 존재: 초항과 공차의 최대 공약수 
 		// a와 d의 최대 공약수가 l~r까지의 최대 공약수
-		cout << remain(a, d) << "\n";
+		cout << remain(max(a,d), min(a,d)) << "\n";
 	}
 
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
 	cin >> a >> d >> q;
 	for (int i = 0; i < q; i++) {
 		int method;
