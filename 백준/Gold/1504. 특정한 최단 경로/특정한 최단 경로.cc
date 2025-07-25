@@ -6,23 +6,36 @@ using namespace std;
 
 int n, e;
 
-void calcDist(vector<vector<pair<int, int>>>& node, queue<int> q, vector<int>& dist) {
-	while (!q.empty()) {
-		int cur = q.front();
-		q.pop();
-		// flag 체크
-		for (auto i = node[cur].begin(); i != node[cur].end(); i++) {
-			pair<int, int> next = *i;
-			if (dist[next.first] > dist[cur] + next.second) {
-				dist[next.first] = dist[cur] + next.second;
-					q.push(next.first);
+
+vector<int> myDijkstra(int start, vector<vector<pair<int, int>>>& node) {
+	vector<int> dist(n + 1, 100000001);
+	// 시작 노드 dist
+	dist[start] = 0;
+	// weight, spot
+	priority_queue<pair<int, int>, vector<pair<int,int>>,greater<pair<int,int>>> pq;
+	pq.push({ 0, start });
+	while (!pq.empty()) {
+		int curDist = pq.top().first;
+		int curSpot = pq.top().second;
+		pq.pop();
+		// 이미 더 짧은 경로 존재 하면 continue
+		if (curDist > dist[curSpot]) continue;
+
+		for (auto i = node[curSpot].begin(); i != node[curSpot].end(); i++) {
+			pair<int, int> next= *i;
+			int nextDist = next.second;
+			int nextSpot = next.first;
+
+			if (dist[nextSpot] > curDist + nextDist) {
+				dist[nextSpot] = curDist + nextDist;
+				pq.push({ dist[nextSpot], nextSpot});
 			}
+
 		}
 	}
 
-	return;
+	return dist;
 }
-
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
@@ -40,28 +53,11 @@ int main() {
 	// 반드시 지나야 하는 2개의 정점
 	int spotA, spotB;
 	cin >> spotA >> spotB;
-	vector<int> dist(n + 1, 100000001);
-	// 1-> spotA dist , distA -> distB, distB -> n;
-	// spot
-	queue<int> q;
-	q.push(1);
-	dist[1] = 0;
-	// 1 -> A, 1-> B dist 계산 
-	calcDist(node, q, dist);
-	
-	// A -> B, A -> n dist
-	vector<int> distAB(n + 1, 100000001);
-	q.push(spotA);
-	distAB[spotA] = 0;
-	calcDist(node, q, distAB);
 
-	// B -> A, B -> n dist
-	vector<int> distBA(n + 1, 100000001);
-	q.push(spotB);
-	distBA[spotB] = 0;
-	calcDist(node, q, distBA);
+	vector<int> dist = myDijkstra(1, node);
+	vector<int> distAB = myDijkstra(spotA, node);
+	vector<int> distBA = myDijkstra(spotB, node);
 
-	// 1 -> A -> B -> n 경로
 	int noEdge = 100000001;
 	bool flagAB = true;
 	bool flagBA = true;
