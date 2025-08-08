@@ -4,26 +4,27 @@ using namespace std;
 
 int n, res;
 
-void getMaxHoney(int beeA, int beeB, int house, vector<int>& memo, vector<int>& memoSum) {
+void getMaxHoney(vector<int>& memo, vector<int>& memoSum) {
 	// 벌과 꿀통들의 위치 관계 3가지
-	int sum;
-	if (house < beeA){
-		// house < beeA < beeB
-		sum =
-			memoSum[beeB] - memo[beeB] - memo[beeA] - memoSum[house] + memo[house] + memoSum[beeA] - memo[beeA] - memoSum[house] + memo[house];
+
+	// 1. 꿀벌 벌집 꿀벌인 경우 -> 사이의 벌집의 값이 최소인 경우 
+	for (int i = 1; i <= n - 2; i++) {
+		int cur = memoSum[n - 1] - memo[0] - memo[n - 1] + memo[i];
+		res = max(res, cur);
 	}
-	else if (beeB < house) {
-		// beeA < beeB << house
-		sum =
-			memoSum[house] - memoSum[beeB] + memoSum[house] - memoSum[beeA] - memo[beeB];
+
+	// 2. 벌집 꿀벌 꿀벌인 경우 -> 벌집이 0번에 위치하기 마지막 벌은 n-1 위치여야 최대 
+	for (int i = 1; i <= n - 2; i++) {
+		int cur = memoSum[n - 1] - memo[n - 1] - memo[i]
+			+ memoSum[i] - memo[i];
+		res = max(res, cur);
 	}
-	else {
-		// beeA < house << beeB
-		sum =
-			memoSum[house] - memoSum[beeA] + memoSum[beeB] - memoSum[house] - memo[beeB] + memo[house];
+
+	// 3. 꿀벌 꿀벌 벌집인 경우 -> 벌집이 n-1에 위치하고, 첫벌은 0에 위치해야 최대
+	for (int i = 1; i <= n - 2; i++) {
+		int cur = memoSum[n - 1] - memoSum[0] - memo[i] + memoSum[n - 1] - memoSum[i];
+		res = max(res, cur);
 	}
-	// 최대 수집꿀 갱신
-	res = max(res, sum);
 }
 
 int main() {
@@ -47,29 +48,9 @@ int main() {
 			memoSum[i] = memoSum[i - 1] + memo[i];
 		}
 	}
-	// a -> h 까지의 꿀의양 sum[h] - sum[a]의 절댓값  
 
-	// 2개의 벌 놓을 위치 선택
-	vector<int> comb(n);
-	comb[n-1] = 1;
-	comb[n-2] = 1;
-	do {
-		vector<int> v; // 벌 위치 무조건 v[0] < v[1]
-		for (int i = 0; i < comb.size(); i++) {
-			if (comb[i] == 1) {
-				v.push_back(i);
-			}
-		}
-		// 벌집 위치
-		for (int i = 0; i < n; i++) {
-			if (i == v[0] || i == v[1]) {
-				continue;
-			}
-			else {
-				getMaxHoney(v[0], v[1], i, memo, memoSum);
-			}
-		}
-	} while (next_permutation(comb.begin(), comb.end()));
+	// 최대값 구하기
+	getMaxHoney(memo, memoSum);
 
 	cout << res;
 	return 0;
