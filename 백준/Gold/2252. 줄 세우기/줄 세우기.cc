@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -19,9 +20,18 @@ int main() {
 		my_map[b].push_back(a);
 	}
 
-	for (int i = 1; i <= n; i++) {
+	/*for (int i = 1; i <= n; i++) {
 		if (!flag[i]) {
 			printSequence(i, flag);
+		}
+	}*/
+	for (auto iter = my_map.begin(); iter != my_map.end(); iter++) {
+		printSequence(iter->first, flag);
+	}
+
+	for (int i = 1; i <= n; i++) {
+		if (!flag[i]) {
+			cout << i << " ";
 		}
 	}
 	return 0;
@@ -34,7 +44,8 @@ int main() {
 // 1 3
 // 1 3 4 5 6  + 2
 void printSequence(int val, vector<bool> &flag){
-	if (my_map[val].size() >= 1) {
+	// **** my_map[val] 이 없어도 이거 돌면 생겨서 -> 무슨 문제가 발생할지 모름 
+	if (my_map.find(val) != my_map.end()) {
 		for (int n : my_map[val]) {
 			if (!flag[n]) {
 				printSequence(n, flag);
