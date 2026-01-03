@@ -1,0 +1,10 @@
+select DATE_FORMAT(a.SALES_DATE, '%Y-%m-%d') as SALES_DATE, a.PRODUCT_ID, a.USER_ID, a.SALES_AMOUNT
+from ONLINE_SALE a
+where DATE_FORMAT(a.SALES_DATE, '%Y%m') = '202203'
+union all 
+select DATE_FORMAT(b.SALES_DATE, '%Y-%m-%d') as SALES_DATE, b.PRODUCT_ID, NULL as USER_ID, b.SALES_AMOUNT
+from OFFLINE_SALE b
+where DATE_FORMAT(b.SALES_DATE, '%Y%m') = '202203'
+order by SALES_DATE asc, PRODUCT_ID asc, USER_ID asc;
+
+
