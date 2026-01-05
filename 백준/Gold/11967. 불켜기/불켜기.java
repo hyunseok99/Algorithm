@@ -42,58 +42,45 @@ class Main{
 		}
 
 		// init
-		arr[1][1] = 1;
-		visit[1][1] = 1;
-		flag[1][1] = true;
+		arr[1][1] = 1; // 불 켜짐
+		visit[1][1] = 1; // 방문 가능 여부
+		flag[1][1] = true; // 방문함
 		Queue<Pos> q = new LinkedList<>();
-		Queue<Pos> nq = new LinkedList<>();
 		q.add(new Pos(1,1));
-		while(true){
-			// 불 키고 -> 새로 생긴 이동 가능한 곳 생기면 다시 작업
-			while(!q.isEmpty()){
-				Pos cur = q.poll();
-				flag[cur.y][cur.x] = true; // 방문 체크
-				// turn on
-				for(Pos room: rooms[cur.y][cur.x]){
+		answer++;
+		// 불 키고 -> 새로 킨 곳이 기존에 이동 가능한 곳 옆이면 추가 
+        // O(n^2 + m)
+		while(!q.isEmpty()){
+			Pos cur = q.poll();
+			// turn on
+			for(Pos room: rooms[cur.y][cur.x]){
+				// 꺼져있던 방이면 불을 켠다
+				if(arr[room.y][room.x] == 0){
 					arr[room.y][room.x] = 1;
-				}
-
-				// can move //
-				for(int dir=0; dir < 4; dir++){
-					int ny = cur.y + dy[dir];
-					int nx = cur.x + dx[dir];
-					if(nx >= 1 && nx <=n && ny>=1 && ny <=n){
-						visit[ny][nx] = 1;
-					}
-				}
-			}
-
-			// 이동 가능하고 불이 켜져 있으며 방문하지 않았다면 q에 추가
-			for(int i=1; i<=n; i++){
-				for(int j=1; j<=n; j++){
-					if(arr[i][j] == 1 && visit[i][j] == 1 && !flag[i][j]){
-						nq.add(new Pos(i,j));
-					}
-				}
-			}
-
-			// 더이상 방문 x면 종료
-			if(nq.isEmpty()){
-				break;
-			}
-
-			while(!nq.isEmpty()){
-				q.add(nq.poll());
-			}
-		}
-
-		for(int i=1; i<=n; i++){
-			for(int j=1; j<=n; j++){
-				if(arr[i][j] == 1) {
 					answer++;
+
+					// 또한 만약 이 방이 다음에 도달 가능하고 아직 방문을 안했었다면 추가
+					if(!flag[room.y][room.x] && visit[room.y][room.x] == 1){
+						flag[room.y][room.x] = true;
+						q.add(room);
+					}
+				}
+			}
+			// can move //
+			for(int dir=0; dir < 4; dir++){
+				int ny = cur.y + dy[dir];
+				int nx = cur.x + dx[dir];
+				if(nx <= 0 || nx > n || ny <=0 || ny > n) continue;
+				// 이동 가능 체크
+				visit[ny][nx] = 1;
+				// 만약 불이 켜져있고 아직 방문을 하지 않았다면 추가
+				if(arr[ny][nx] == 1 && flag[ny][nx] == false){
+					flag[ny][nx] = true;
+					q.add(new Pos(ny, nx));
 				}
 			}
 		}
+
 
 		bw.write(answer + "");
 		bw.flush();
