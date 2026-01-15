@@ -35,15 +35,22 @@ class Main{
 		for(int i=1; i<=n; i++){
 			Queue<Integer> q = new LinkedList<>();
 			q.add(i);
+			// q 중복 삽입 방지
+			boolean[] inQ = new boolean[n+1];
+			inQ[i] = true;
 			while(!q.isEmpty()){
 				int cur = q.poll();
-
+				inQ[cur] = false;
 				for(int next=1; next<=n; next++){
 					if(adj[cur][next] == 0) continue;
 					int n_val = time[i][cur] + adj[cur][next];
-					if(time[i][next] > n_val){
+					if(time[i][next] > n_val ){
 						time[i][next] = n_val;
-						q.add(next);
+
+						if(!inQ[next]){
+							q.add(next);
+							inQ[next] = true;
+						}
 					}
 				}
 			}
